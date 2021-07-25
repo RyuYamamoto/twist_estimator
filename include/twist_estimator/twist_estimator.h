@@ -7,6 +7,8 @@
 #include <tf2/LinearMath/Quaternion.h>
 #include <tf2_geometry_msgs/tf2_geometry_msgs.h>
 
+const double eps = 0.0001;
+
 class TwistEstimator
 {
 public:

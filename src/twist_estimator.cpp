@@ -31,7 +31,14 @@ void TwistEstimator::poseStampedCallback(const geometry_msgs::PoseStamped msg)
 {
   static geometry_msgs::PoseStamped prev_pose_stamped = msg;
 
+  geometry_msgs::TwistStamped twist;
+
   const double dt = (msg.header.stamp - prev_pose_stamped.header.stamp).toSec();
+  if(dt < eps) {
+    twist.header = msg.header;
+    twist.header.frame_id = frame_id_;
+    twist_publisher_.publish(twist);
+  }
 
   geometry_msgs::Vector3 rpy = convertToRPY(msg.pose.orientation);
   geometry_msgs::Vector3 prev_rpy = convertToRPY(prev_pose_stamped.pose.orientation);
@@ -40,7 +47,6 @@ void TwistEstimator::poseStampedCallback(const geometry_msgs::PoseStamped msg)
   const double diff_y = msg.pose.position.y - prev_pose_stamped.pose.position.y;
   const double diff_z = msg.pose.position.z - prev_pose_stamped.pose.position.z;
 
-  geometry_msgs::TwistStamped twist;
   twist.header = msg.header;
   twist.header.frame_id = frame_id_;
   twist.twist.linear.x =
